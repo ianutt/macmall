@@ -27,8 +27,7 @@ export default {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
-    padding: 2px;
+    padding:0 2px;
     overflow: hidden;
-    padding-bottom: 49px;
   }
 </style>

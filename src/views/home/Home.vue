@@ -65,7 +65,8 @@ export default {
       currentType: 'pop',
       isShowBackTop: false,
       tabOffsetTop: 0,
-      isTabFixed: false
+      isTabFixed: false,
+      saveY: 0
     }
   },
   computed: {
@@ -190,5 +191,6 @@ export default {
     bottom: 49px;
     left: 0;
     right: 0;
+    overflow: hidden;
   }
 </style>
