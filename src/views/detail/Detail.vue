@@ -13,8 +13,9 @@
       <detail-comment-info ref="comment" :comment-info="commentInfo"/>
       <goods-list ref="recommend" :goods="recommends"/>
     </scroll>
-    <detail-bottom-bar/>
+    <detail-bottom-bar @addCart="addToCart"/>
     <back-top @click.native="backClick" v-show="isShowBackTop"/>
+     <toast :message="message" :show="show"/>
   </div>
 </template>
 
@@ -32,9 +33,12 @@ import Scroll from "components/common/scroll/Scroll";
 import BackTop from "components/content/bakcTop/BackTop";
 import GoodsList from "components/content/goods/GoodsList";
 import GoodsListItem from "components/content/goods/GoodsListItem";
+import Toast from "components/common/toast/Toast";
 
 import {getDetail, getRecommend, Goods, Shop, GoodsParam} from "network/detail";
-import {debounce} from "common/untils"
+import {debounce} from "common/untils";
+
+import { mapActions } from 'vuex';
 
 export default {
   name: "Detail",
@@ -50,7 +54,8 @@ export default {
     Scroll,
     BackTop,
     GoodsList,
-    GoodsListItem
+    GoodsListItem,
+    Toast
   },
   data() {
     return {
@@ -65,7 +70,9 @@ export default {
       themeTopYs: [],
       getThemeTopY: null,
       currentIndex: 0,
-      isShowBackTop: false
+      isShowBackTop: false,
+      message: '',
+      show: false
     }
   },
   created() {
@@ -116,6 +123,7 @@ export default {
 
   },
   methods: {
+    ...mapActions(['addCart']),
     //详情页滚不动，监听详情图片加载完再刷新
     imageLoad() {
       this.$refs.scroll.refresh()
@@ -145,6 +153,32 @@ export default {
     },
     backClick() {
       this.$refs.scroll.scrollTo(0, 0)
+    },
+    addToCart() {
+      //1.获取购物车需要展示的信息
+      const product = {}
+      product.image = this.topImages[0];
+      product.title = this.goods.title;
+      product.desc = this.goods.desc;
+      product.price = this.goods.realPrice;
+      product.iid = this.iid;
+
+      //2.将商品添加到购物车里(1.Promise 2.mapActions)
+      // this.$store.commit('addCart', product)
+      // this.$store.dispatch('addCart', product)
+      this.addCart(product).then( res => {
+        this.show = true;
+        this.message = res
+        setTimeout( () => {
+          this.show = false;
+          this.message = ''
+        },1500)
+      })
+
+      /*this.$store.dispatch('addCart', product).then(res => {
+        console.log(res)
+      })*/
+
     }
   }
 }
